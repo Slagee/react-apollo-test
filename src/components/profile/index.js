@@ -2,11 +2,12 @@ import React from "react";
 import { gql, useQuery } from "@apollo/client";
 import RepositoryList from "../repository/repositoryList";
 import Loading from "../loading";
+import ErrorMessage from "../error";
 
 const GET_REPOSITORIES_OF_CURRENT_USER = gql`
   {
     viewer {
-      repositories(first: 5, orderBy: { direction: DESC, field: STARGAZERS }) {
+      repositories(first: 5, orderBy: { direction: DC, field: STARGAZERS }) {
         edges {
           node {
             id
@@ -41,7 +42,9 @@ const Profile = () => {
   if (loading || !data) {
     return <Loading />;
   }
-  if (error) return `Error! ${error.message}`;
+  if (error) {
+    return <ErrorMessage error={error} />;
+  }
 
   return <RepositoryList repositories={data.viewer.repositories} />;
 };
