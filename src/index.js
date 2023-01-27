@@ -1,32 +1,37 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import {ApolloClient, HttpLink, InMemoryCache} from "@apollo/client";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import {
+  ApolloClient,
+  ApolloProvider,
+  HttpLink,
+  InMemoryCache,
+} from "@apollo/client";
 
-const GIHUB_BASE_URL = 'https://api.github.com/graphql';
+const GIHUB_BASE_URL = "https://api.github.com/graphql";
 
 const httpLink = new HttpLink({
-    uri: GIHUB_BASE_URL,
-    headers: {
-        authorization: `Bearer ${
-            process.env.REACT_APP_GITHUB_PERSONAL_ACCESS_TOKEN
-        }`,
-    },
+  uri: GIHUB_BASE_URL,
+  headers: {
+    authorization: `Bearer ${process.env.REACT_APP_GITHUB_PERSONAL_ACCESS_TOKEN}`,
+  },
 });
 
 const cache = new InMemoryCache();
 
 const client = new ApolloClient({
-    link: httpLink,
-    cache,
-})
+  link: httpLink,
+  cache,
+});
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
   </React.StrictMode>
 );
 
