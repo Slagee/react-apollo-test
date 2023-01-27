@@ -1,13 +1,14 @@
 import React from "react";
-import { gql, useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
 import RepositoryList from "../repository/repositoryList";
 import Loading from "../loading";
 import ErrorMessage from "../error";
+import { graphql } from "@apollo/client/react/hoc";
 
 const GET_REPOSITORIES_OF_CURRENT_USER = gql`
   {
     viewer {
-      repositories(first: 5, orderBy: { direction: DC, field: STARGAZERS }) {
+      repositories(first: 5, orderBy: { direction: DESC, field: STARGAZERS }) {
         edges {
           node {
             id
@@ -36,17 +37,18 @@ const GET_REPOSITORIES_OF_CURRENT_USER = gql`
   }
 `;
 
-const Profile = () => {
-  const { loading, error, data } = useQuery(GET_REPOSITORIES_OF_CURRENT_USER);
-
-  if (loading || !data) {
-    return <Loading />;
-  }
+const Profile = ({ loading, error, data }) => {
   if (error) {
     return <ErrorMessage error={error} />;
   }
 
-  return <RepositoryList repositories={data.viewer.repositories} />;
+  const { viewer } = data;
+
+  if (loading || !viewer) {
+    return <Loading />;
+  }
+
+  return <RepositoryList repositories={viewer.repositories} />;
 };
 
-export default Profile;
+export default graphql(GET_REPOSITORIES_OF_CURRENT_USER)(Profile);
