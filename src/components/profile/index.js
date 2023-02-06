@@ -4,6 +4,7 @@ import RepositoryList from "../repository/repositoryList";
 import Loading from "../loading";
 import ErrorMessage from "../error";
 import { graphql } from "@apollo/client/react/hoc";
+import { REPOSITORY_FRAGMENT } from "../repository";
 
 const GET_REPOSITORIES_OF_CURRENT_USER = gql`
   {
@@ -11,30 +12,14 @@ const GET_REPOSITORIES_OF_CURRENT_USER = gql`
       repositories(first: 5, orderBy: { direction: DESC, field: STARGAZERS }) {
         edges {
           node {
-            id
-            name
-            url
-            descriptionHTML
-            primaryLanguage {
-              name
-            }
-            owner {
-              login
-              url
-            }
-            stargazers {
-              totalCount
-            }
-            viewerHasStarred
-            watchers {
-              totalCount
-            }
-            viewerSubscription
+            ...repository
           }
         }
       }
     }
   }
+
+  ${REPOSITORY_FRAGMENT}
 `;
 
 const Profile = ({ loading, error, data }) => {
